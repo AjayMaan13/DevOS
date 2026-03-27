@@ -5,18 +5,29 @@ import EmailPanel from './components/EmailPanel';
 import CodeEditor from './components/CodeEditor';
 
 function App() {
-  const [command, setCommand] = useState('');
   const [loading, setLoading] = useState(false);
   const [output, setOutput] = useState(null);
 
-  function handleCommand(value) {
+  async function handleCommand(value) {
     setLoading(true);
-    setOutput({
-      plan: '• Review pull requests\n• Fix auth bug in user service\n• Write unit tests for payment module\n• Sync with design team at 3pm',
-      email: 'Hi Sarah,\n\nJust wanted to follow up on the API integration we discussed yesterday. I have made some progress on the auth bug and should have a fix ready by EOD.\n\nLet me know if you need anything in the meantime.\n\nBest,\nAJ',
-      code: '// Fix: auth token expiry in user service\nfunction refreshAuthToken(userId) {\n  const token = generateToken(userId);\n  cache.set(`auth:${userId}`, token, { ttl: 3600 });\n  return token;\n}',
-    });
-    setLoading(false);
+    try {
+      const response = await fetch('http://localhost:3001/ai-command', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command: value }),
+      });
+      const data = await response.json();
+      setOutput(data);
+    } catch (err) {
+      console.error(err);
+      setOutput({
+        plan: 'Error — check the console.',
+        email: 'Error — check the console.',
+        code: '// Error — check the console.',
+      });
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
