@@ -2,6 +2,14 @@ import { useState } from 'react';
 import CommandBar from './components/CommandBar';
 import PlanPanel from './components/PlanPanel';
 import EmailPanel from './components/EmailPanel';
+import ReasoningPanel from './components/ReasoningPanel';
+
+function getGreeting() {
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  const day = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  return `${greeting}, Ajay — ${day}`;
+}
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -40,10 +48,14 @@ function App() {
       <CommandBar onSubmit={handleCommand} loading={loading} />
       {error && <p className="error-message">{error}</p>}
       {output !== null && (
-        <div className="panels">
-          <PlanPanel plan={output.plan} />
-          <EmailPanel email={output.email} />
-        </div>
+        <>
+          <p className="greeting">{getGreeting()}</p>
+          <div className="panels">
+            <PlanPanel plan={output.plan} />
+            <EmailPanel email={output.email} />
+            {output.reasoning && <ReasoningPanel reasoning={output.reasoning} />}
+          </div>
+        </>
       )}
     </div>
   );

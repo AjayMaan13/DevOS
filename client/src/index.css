@@ -106,6 +106,16 @@ h1 {
   border-radius: 4px;
 }
 
+/* ── Greeting ─────────────────────────────────── */
+
+.greeting {
+  font-size: 0.95rem;
+  color: #7ee787;
+  margin-bottom: 1rem;
+  letter-spacing: 0.03em;
+  opacity: 0.9;
+}
+
 /* ── Panels Grid ──────────────────────────────── */
 
 .panels {
@@ -172,8 +182,9 @@ h1 {
   color: #7ee787;
 }
 
-/* ── Code Editor Panel ────────────────────────── */
+/* ── Reasoning Panel ──────────────────────────── */
 
-.code-editor-panel {
+.reasoning-panel {
   grid-column: 1 / -1;
+  border-color: #1a2a1a;
 }

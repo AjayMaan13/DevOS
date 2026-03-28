@@ -117,7 +117,7 @@ Start the plan field with exactly this line: "${greeting}. Here's your day:"
 Then list the priorities as bullet points.
 
 Return ONLY a raw JSON object. No markdown fences, no explanation, no preamble.
-Exact format: {"plan":"greeting + bullet list","email":"short draft reply to most urgent email","code":"starter JS for the top Notion coding task"}`
+Exact format: {"plan":"bullet list of today's priorities","email":"short draft reply to most urgent email","code":"starter JS for the top Notion coding task","reasoning":"2-3 sentences explaining why the top task is highest priority given the emails and calendar — be specific, reference actual meeting times and email context"}`
       }],
     });
 
