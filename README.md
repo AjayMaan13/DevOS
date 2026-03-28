@@ -22,7 +22,7 @@ DevOS is a local AI assistant that reads your actual work context — not a gene
 - **Frontend** — React, plain CSS (dark terminal aesthetic)
 - **Backend** — Node.js, Express
 - **AI** — Anthropic Claude API (`claude-haiku-4-5-20251001`)
-- **Live data** — Notion MCP (`mcp.notion.com/mcp`)
+- **Live data** — Notion MCP (`mcp.notion.com/mcp`), Gmail MCP (`gmail.mcp.claude.com/mcp`), Google Calendar MCP (`gcal.mcp.claude.com/mcp`)
 - **Write-back** — Notion REST API (creates "Today's Plan" page after each run)
 
 ## Prerequisites
