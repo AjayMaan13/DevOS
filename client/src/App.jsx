@@ -35,6 +35,7 @@ function App() {
       <header>
         <h1>DevOS</h1>
       </header>
+      <p className="subtitle">// AI command center — Notion · Gmail · Calendar</p>
       <CommandBar onSubmit={handleCommand} loading={loading} />
       {output !== null && (
         <div className="panels">
