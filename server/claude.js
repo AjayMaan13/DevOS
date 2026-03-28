@@ -16,6 +16,53 @@ const FAKE_GCAL = `9:00 AM  — Team standup (30 min)
 2:00 PM  — Sprint planning (1 hour)
 Free blocks: 11:00 AM–2:00 PM, 3:00 PM–5:00 PM`;
 
+function getGreeting() {
+  const now = new Date();
+  const hour = now.getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  const day = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  return `${greeting} Ajay — ${day}`;
+}
+
+async function writeBackToNotion(plan) {
+  const apiKey = process.env.NOTION_API_KEY;
+  const parentId = process.env.NOTION_PARENT_PAGE_ID;
+  if (!apiKey || apiKey === 'placeholder' || !parentId || parentId === 'placeholder') {
+    console.log('[notion write] skipped — NOTION_API_KEY or NOTION_PARENT_PAGE_ID not set');
+    return;
+  }
+
+  const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  const body = {
+    parent: { page_id: parentId },
+    properties: {
+      title: { title: [{ text: { content: `Today's Plan — ${today}` } }] },
+    },
+    children: plan.split('\n').filter(Boolean).map(line => ({
+      object: 'block',
+      type: 'bulleted_list_item',
+      bulleted_list_item: { rich_text: [{ type: 'text', text: { content: line.replace(/^[•\-]\s*/, '') } }] },
+    })),
+  };
+
+  try {
+    const res = await fetch('https://api.notion.com/v1/pages', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        'Notion-Version': '2022-06-28',
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (data.id) console.log('[notion write] page created:', data.url);
+    else console.log('[notion write] failed:', JSON.stringify(data));
+  } catch (e) {
+    console.log('[notion write] error:', e.message);
+  }
+}
+
 async function runDevOS(command) {
   try {
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -43,13 +90,17 @@ async function runDevOS(command) {
 
     console.log('[notion]', notionData);
 
-    // --- Synthesis call: Notion (real) + Gmail + GCal (realistic) ---
+    const greeting = getGreeting();
+
+    // --- Synthesis call ---
     const synthesis = await client.messages.create({
       model: MODEL,
       max_tokens: 1200,
       messages: [{
         role: 'user',
         content: `You are DevOS, an AI command center for a software engineer.
+
+${greeting}
 
 NOTION TASKS (live):
 ${notionData}
@@ -62,8 +113,11 @@ ${FAKE_GCAL}
 
 USER COMMAND: ${command}
 
-Based on all three sources, return ONLY a raw JSON object. No markdown fences, no explanation, no preamble.
-Exact format: {"plan":"bullet list of today's priorities","email":"short draft reply to most urgent email","code":"starter JS for the top Notion coding task"}`
+Start the plan field with exactly this line: "${greeting}. Here's your day:"
+Then list the priorities as bullet points.
+
+Return ONLY a raw JSON object. No markdown fences, no explanation, no preamble.
+Exact format: {"plan":"bullet list of today's priorities","email":"short draft reply to most urgent email","code":"starter JS for the top Notion coding task","reasoning":"2-3 sentences explaining why the top task is highest priority given the emails and calendar — be specific, reference actual meeting times and email context"}`
       }],
     });
 
@@ -88,6 +142,9 @@ Exact format: {"plan":"bullet list of today's priorities","email":"short draft r
     if (!parsed.plan || !parsed.email || !parsed.code) {
       throw new Error('Claude returned an unexpected response format.');
     }
+
+    // Write plan back to Notion asynchronously — don't block the response
+    writeBackToNotion(parsed.plan).catch(() => {});
 
     return parsed;
 
