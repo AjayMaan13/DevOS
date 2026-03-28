@@ -2,7 +2,11 @@
 
 > AI-powered command center for software engineers. One prompt. Live context from Notion, Gmail, and Google Calendar.
 
-![DevOS Screenshot](./screenshot.png)
+![DevOS Screenshot](./demo.png)
+
+## Workflow
+
+<img src="./workflow.svg" width="600" alt="DevOS Workflow" />
 
 ## What It Does
 
