@@ -2,7 +2,6 @@ import { useState } from 'react';
 import CommandBar from './components/CommandBar';
 import PlanPanel from './components/PlanPanel';
 import EmailPanel from './components/EmailPanel';
-import CodeEditor from './components/CodeEditor';
 
 function App() {
   const [loading, setLoading] = useState(false);
@@ -44,7 +43,6 @@ function App() {
         <div className="panels">
           <PlanPanel plan={output.plan} />
           <EmailPanel email={output.email} />
-          <CodeEditor code={output.code} />
         </div>
       )}
     </div>
