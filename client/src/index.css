@@ -144,6 +144,34 @@ h1 {
   font-size: 0.875rem;
 }
 
+/* ── Suggestion Chips ─────────────────────────── */
+
+.suggestions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: -1.25rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.suggestion-chip {
+  padding: 0.3rem 0.75rem;
+  background: transparent;
+  border: 1px solid #333;
+  color: #555;
+  font-family: inherit;
+  font-size: 0.75rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  letter-spacing: 0.02em;
+}
+
+.suggestion-chip:hover {
+  border-color: #7ee787;
+  color: #7ee787;
+}
+
 /* ── Code Editor Panel ────────────────────────── */
 
 .code-editor-panel {
